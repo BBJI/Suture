@@ -1,0 +1,1 @@
+(self.webpackChunksuture=self.webpackChunksuture||[]).push([[796],{638:e=>{e.exports="static/images/favicon.ico"}}]);

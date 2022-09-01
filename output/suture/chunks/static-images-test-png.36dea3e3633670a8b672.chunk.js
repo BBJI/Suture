@@ -1,0 +1,1 @@
+(self.webpackChunksuture=self.webpackChunksuture||[]).push([[968],{421:e=>{e.exports="static/images/test.png"}}]);
