@@ -1,158 +1,74 @@
-import React, { BaseSyntheticEvent, useEffect, useState, useReducer, StrictMode } from 'react';
+import React, { BaseSyntheticEvent, useEffect, useState, useReducer, StrictMode, useRef } from 'react';
 import './index.scss';
 import { Box, TextField, Grid, Paper, InputAdornment, IconButton } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Login, Visibility, VisibilityOff } from '@mui/icons-material';
 import _ from 'lodash';
+import { textFieldInterface } from '../../components/suture-form/interface';
+import { loginFormData, loginFormKeys, baseConfig } from './data';
+import SutureForm from '../../components/suture-form';
 
 function LoginPage() {
-    interface inputLabelInterface {
-        shrink: boolean;
-    }
-    interface loginFormInterface {
-        id: string;
-        label: string;
-        value: string;
-        variant: 'filled' | 'outlined' | 'standard';
-        type: string;
-        autoFocus: boolean;
-        size: 'medium' | 'small';
-        inputLabelProps: inputLabelInterface;
-        error: boolean;
-        required: boolean;
-        helperText: string;
-        startAdornment: any;
-        endAdornment: any;
-        state: any;
-        sx?: any;
+    const sutureFormRef: any = useRef();
+    // 密码是否可见按钮元素
+    const visibilityElement = (showPassword: boolean) => {
+        return (
+            <InputAdornment position="end">
+                <IconButton onClick={handleClickShowPassword} edge="end" size="small">
+                    {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                </IconButton>
+            </InputAdornment>
+        )
     }
 
-    const initialLoginForm: Array<loginFormInterface> = [
-        {
-            id: 'username',
-            label: '账号',
-            value: '',
-            variant: 'outlined',
-            type: 'text',
-            autoFocus: true,
-            size: 'small',
-            inputLabelProps: {
-                shrink: true,
-            },
-            error: false,
-            required: false,
-            helperText: ' ',
-            startAdornment: null,
-            endAdornment: null,
-            state: {},
-            sx: {
-                width: '25ch',
-            },
-        },
-        {
-            id: 'password',
-            label: '密码',
-            value: '',
-            variant: 'outlined',
-            type: 'password',
-            autoFocus: false,
-            size: 'small',
-            inputLabelProps: {
-                shrink: true,
-            },
-            error: false,
-            required: false,
-            helperText: ' ',
-            startAdornment: null,
-            endAdornment: (
-                <InputAdornment position="end">
-                    <IconButton onClick={handleClickShowPassword} edge="end" size="small">
-                        {<Visibility fontSize="small" />}
-                    </IconButton>
-                </InputAdornment>
-            ),
-            state: {
-                showPassword: false,
-            },
-            sx: {
-                width: '25ch',
-            },
-        },
-    ];
+    // 数据源配置追加
+    loginFormData.password.endAdornment = visibilityElement(false);
+    for(let k in loginFormData) {
+        let loginFormItem = loginFormData[k];
+        loginFormItem.onChange = (e: BaseSyntheticEvent, key: string, formData: any) => {
+            console.log(e, key, formData);
+        };
+    }
+
     const [loginBtnDisabled, setLoginBtnDisabled] = useState<boolean>(true);
-    const loginFormReducer = (state: Array<loginFormInterface>, action: any) => {
-        let currItem = state.find((item) => item.id === action.id);
-        let errorItem = state.find((item) => item.error);
-        setLoginBtnDisabled(errorItem ? true : false);
-        if (currItem) {
-            Object.assign(currItem, action.data);
-            return [...state];
-        }
-        return state;
-    };
 
-    const [loginForm, setLoginForm] = useReducer(loginFormReducer, initialLoginForm);
+
     const [loginBtnLoading, setLoginBtnLoading] = useState<boolean>(false);
-    // const [loginBtnDisabled, setLoginBtnDisabled] = useState<boolean>(true);
 
     // 登录
     function login(): void {
-        setLoginBtnLoading(true);
-        let textField = loginForm.find((item) => !item.value);
-        if (textField) {
-            setLoginForm({
-                id: textField.id,
-                data: {
-                    error: true,
-                    helperText: `${textField.label}必填`,
-                },
-            });
-        }
-        setLoginBtnLoading(false);
+        // setLoginBtnLoading(true);
+        // let invalidKey: (string | undefined) = loginFormKeys.find((key: string) => {
+        //     let textField = loginForm[key][0];
+        //     return !textField.value;
+        // });
+        // if(invalidKey){
+        //     let [textField, setTextField] = loginForm[invalidKey];
+        //     let data = {
+        //         error: true,
+        //         helperText: `${textField.label}必填`,
+        //     };
+        //     setTextField(data);
+        // }
+        // setLoginBtnLoading(false);
     }
-
-    // 输入
-    function loginChange(e: BaseSyntheticEvent, id: string): void {
-        let value = e.target.value;
-        let textField = loginForm.find((item) => item.id === id);
-        if (textField) {
-            setLoginForm({
-                id,
-                data: {
-                    value,
-                    error: value ? false : true,
-                    helperText: value ? ' ' : `${textField.label}必填`,
-                },
-            });
-        }
-    }
-
-    // 输入节流
-    const LoginChangeDebounce = _.debounce(loginChange, 200);
 
     function handleClickShowPassword(): void {
-        let id = 'password';
-        let textField = loginForm.find((item) => item.id === id);
+        let formData = sutureFormRef.current.getFormData();
+        let [textField, setTextField] = formData.password;
         if (textField) {
             let showPassword = !textField.state.showPassword;
-            setLoginForm({
-                id: 'password',
-                data: {
-                    type: showPassword ? 'text' : 'password',
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton onClick={handleClickShowPassword} edge="end" size="small">
-                                {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                            </IconButton>
-                        </InputAdornment>
-                    ),
-                    state: Object.assign(textField.state, { showPassword }),
-                },
+            setTextField({
+                type: showPassword ? 'text' : 'password',
+                endAdornment: visibilityElement(showPassword),
+                state: Object.assign(textField.state, { showPassword }),
             });
         }
     }
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+
+    }, []);
 
     return (
         <StrictMode>
@@ -175,30 +91,8 @@ function LoginPage() {
                         }}
                     >
                         <Paper elevation={24} classes={{ root: 'login-card' }}>
+                            <SutureForm data={loginFormData} config={baseConfig} ref={sutureFormRef}/>
                             <Grid container direction="column" justifyContent="center" alignItems="center" spacing={1}>
-                                {loginForm.map((item: loginFormInterface) => {
-                                    return (
-                                        <Grid item md={10} xs={12} key={item.id}>
-                                            <TextField
-                                                id={item.id}
-                                                label={item.label}
-                                                variant={item.variant}
-                                                type={item.type}
-                                                size={item.size}
-                                                autoFocus={item.autoFocus}
-                                                error={item.error}
-                                                required={item.required}
-                                                helperText={item.helperText}
-                                                InputProps={{
-                                                    endAdornment: item.endAdornment,
-                                                    startAdornment: item.startAdornment,
-                                                }}
-                                                sx={item.sx || {}}
-                                                onChange={(e) => LoginChangeDebounce(e, item.id)}
-                                            />
-                                        </Grid>
-                                    );
-                                })}
                                 <Grid item md={10} xs={10} key="loginBtn">
                                     <LoadingButton
                                         variant="contained"

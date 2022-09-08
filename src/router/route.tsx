@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
-import lazyLoadRoutes from '../components/lazy-load-routes';
+import lazyLoadRoutes from '../utils/lazy-load-routes';
 
 export const Routes = () => {
     return useRoutes([
