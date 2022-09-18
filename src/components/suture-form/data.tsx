@@ -1,7 +1,7 @@
-import { textFieldInterface } from "./interface";
+import { textFieldInterface } from './interface';
+import _ from 'lodash';
 
-
-const baseData: object = {
+const baseData: textFieldInterface = {
     id: 'id',
     label: 'label',
     value: '',
@@ -18,35 +18,25 @@ const baseData: object = {
     startAdornment: null,
     endAdornment: null,
     state: {},
-    sx: {
-        width: '25ch',
-    },
-}
-
-const mergeBaseData = (data: object): any => {
-    return Object.assign({}, baseData, data) as textFieldInterface
-}
-
-const getFormData = (formData: any):any => {
-    return formData;
-}
+};
 
 const baseConfig: object = {
     grid: {
         container: {
-            direction: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            spacing: 1
+            direction: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            spacing: 2,
         },
         item: {
-            md: 10,
-            xs: 12
-        }
+            md: 4,
+            xs: 4,
+        },
     },
-    func: {
-        getFormData
-    }
-}
+};
 
-export { baseData, mergeBaseData, baseConfig };
+const merge = (...args: Array<object>) => {
+    return _.merge({}, ...args);
+};
+
+export { baseData, baseConfig, merge };

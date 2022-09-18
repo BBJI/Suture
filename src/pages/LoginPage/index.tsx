@@ -5,7 +5,7 @@ import { LoadingButton } from '@mui/lab';
 import { Login, Visibility, VisibilityOff } from '@mui/icons-material';
 import _ from 'lodash';
 import { textFieldInterface } from '../../components/suture-form/interface';
-import { loginFormData, loginFormKeys, baseConfig } from './data';
+import { loginFormData, loginFormKeys, loginConfig } from './data';
 import SutureForm from '../../components/suture-form';
 
 function LoginPage() {
@@ -18,20 +18,20 @@ function LoginPage() {
                     {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                 </IconButton>
             </InputAdornment>
-        )
-    }
+        );
+    };
 
     // 数据源配置追加
     loginFormData.password.endAdornment = visibilityElement(false);
-    for(let k in loginFormData) {
+    for (let k in loginFormData) {
         let loginFormItem = loginFormData[k];
-        loginFormItem.onChange = (e: BaseSyntheticEvent, key: string, formData: any) => {
-            console.log(e, key, formData);
+        loginFormItem.onChange = (data: textFieldInterface) => {
+            console.log(data);
+            console.log(sutureFormRef.current.getFormState());
         };
     }
 
     const [loginBtnDisabled, setLoginBtnDisabled] = useState<boolean>(true);
-
 
     const [loginBtnLoading, setLoginBtnLoading] = useState<boolean>(false);
 
@@ -66,9 +66,7 @@ function LoginPage() {
         }
     }
 
-    useEffect(() => {
-
-    }, []);
+    useEffect(() => {}, []);
 
     return (
         <StrictMode>
@@ -91,7 +89,7 @@ function LoginPage() {
                         }}
                     >
                         <Paper elevation={24} classes={{ root: 'login-card' }}>
-                            <SutureForm data={loginFormData} config={baseConfig} ref={sutureFormRef}/>
+                            <SutureForm data={loginFormData} config={loginConfig} ref={sutureFormRef} />
                             <Grid container direction="column" justifyContent="center" alignItems="center" spacing={1}>
                                 <Grid item md={10} xs={10} key="loginBtn">
                                     <LoadingButton
