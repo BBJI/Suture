@@ -22,7 +22,6 @@ const SutureForm = forwardRef((props: { data: any; config: any }, ref: any) => {
     const formData: any = {};
     const formReducer = (state: textFieldInterface, action: object) => {
         let data = Object.assign({}, state, action);
-        console.log(data, 'data');
         return data;
     };
 
@@ -38,7 +37,6 @@ const SutureForm = forwardRef((props: { data: any; config: any }, ref: any) => {
         let value = e.target.value;
         let [textField, setTextField] = formData[key];
         let isRequired = (textField.require || textField.required) && !value;
-        console.log(textField, 'ff');
         if (textField) {
             let data = {
                 value,
@@ -47,7 +45,6 @@ const SutureForm = forwardRef((props: { data: any; config: any }, ref: any) => {
             };
             setTextField(data);
         }
-        console.log(222);
     };
 
     const formItemChangeDebounce = _.debounce(formItemChange, 200);
@@ -73,10 +70,6 @@ const SutureForm = forwardRef((props: { data: any; config: any }, ref: any) => {
         getFormConfig, // 获取表单配置
         getFormState, // 获取是否可提交表单状态
     }));
-
-    // useEffect(() => {
-    //     console.log(111);
-    // }, [formData]);
 
     return (
         <StrictMode>

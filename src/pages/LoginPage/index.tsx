@@ -1,11 +1,10 @@
-import React, { BaseSyntheticEvent, useEffect, useState, useReducer, StrictMode, useRef } from 'react';
+import React, { useEffect, useState, StrictMode, useRef } from 'react';
 import './index.scss';
-import { Box, TextField, Grid, Paper, InputAdornment, IconButton } from '@mui/material';
+import { Box, Grid, Paper, InputAdornment, IconButton } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Login, Visibility, VisibilityOff } from '@mui/icons-material';
 import _ from 'lodash';
-import { textFieldInterface } from '../../components/suture-form/interface';
-import { loginFormData, loginFormKeys, loginConfig } from './data';
+import { loginFormData, loginConfig } from './data';
 import SutureForm from '../../components/suture-form';
 
 function LoginPage() {
@@ -25,32 +24,23 @@ function LoginPage() {
     loginFormData.password.endAdornment = visibilityElement(false);
     for (let k in loginFormData) {
         let loginFormItem = loginFormData[k];
-        loginFormItem.onChange = (data: textFieldInterface) => {
-            console.log(data);
-            console.log(sutureFormRef.current.getFormState());
+        loginFormItem.onChange = () => {
+            const isDisabled = sutureFormRef.current.getFormState() === 'invalid' ? true : false;
+            setLoginBtnDisabled(isDisabled);
         };
     }
 
+    // 登录按钮是否可用状态
     const [loginBtnDisabled, setLoginBtnDisabled] = useState<boolean>(true);
 
+    // 登录按钮loading状态
     const [loginBtnLoading, setLoginBtnLoading] = useState<boolean>(false);
 
     // 登录
     function login(): void {
-        // setLoginBtnLoading(true);
-        // let invalidKey: (string | undefined) = loginFormKeys.find((key: string) => {
-        //     let textField = loginForm[key][0];
-        //     return !textField.value;
-        // });
-        // if(invalidKey){
-        //     let [textField, setTextField] = loginForm[invalidKey];
-        //     let data = {
-        //         error: true,
-        //         helperText: `${textField.label}必填`,
-        //     };
-        //     setTextField(data);
-        // }
-        // setLoginBtnLoading(false);
+        setLoginBtnLoading(true);
+
+        setLoginBtnLoading(false);
     }
 
     function handleClickShowPassword(): void {
